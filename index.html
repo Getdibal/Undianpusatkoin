@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Undian Berhadiah Chip - Pusat Koin</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        header h1 {
+            color: #2575fc;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        header p {
+            color: #666;
+            font-size: 16px;
+        }
+        
+        .logo {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 20px;
+            background-color: #2575fc;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+        
+        input:focus {
+            border-color: #2575fc;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(37, 117, 252, 0.2);
+        }
+        
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 117, 252, 0.4);
+        }
+        
+        .whatsapp-group {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .whatsapp-group a {
+            display: inline-block;
+            background-color: #25D366;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+        
+        .whatsapp-group a:hover {
+            background-color: #128C7E;
+        }
+        
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            text-align: center;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: white;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">PK</div>
+            <h1>Pusat Koin</h1>
+            <p>Formulir Partisipasi Undian Berhadiah Chip</p>
+        </header>
+        
+        <div class="success-message" id="successMessage">
+            Terima kasih! Data Anda berhasil disimpan. Selamat berpartisipasi dalam undian!
+        </div>
+        
+        <form id="registrationForm">
+            <div class="form-group">
+                <label for="whatsapp">Nomor WhatsApp</label>
+                <input type="text" id="whatsapp" name="whatsapp" placeholder="Contoh: 628123456789" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="gameId">ID Akun Game HGI</label>
+                <input type="text" id="gameId" name="gameId" placeholder="Masukkan ID akun game HGI Anda" required>
+            </div>
+            
+            <button type="submit">Daftar Sekarang</button>
+        </form>
+        
+        <div class="whatsapp-group">
+            <p>Bergabunglah dengan grup WhatsApp kami untuk informasi lebih lanjut</p>
+            <a href="https://chat.whatsapp.com/IhwSUNU1ack2dS6SnywCdo" target="_blank">Gabung Grup WhatsApp</a>
+        </div>
+    </div>
+    
+    <footer>
+        <p>&copy; 2023 Pusat Koin. Seluruh hak cipta dilindungi.</p>
+    </footer>
+
+    <!-- Firebase App (core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <!-- Firebase Firestore -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+    <script>
+        // Konfigurasi Firebase
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Inisialisasi Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Handle form submission
+        document.getElementById('registrationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const whatsapp = document.getElementById('whatsapp').value;
+            const gameId = document.getElementById('gameId').value;
+            
+            // Simpan data ke Firebase
+            db.collection("participants").add({
+                whatsapp: whatsapp,
+                gameId: gameId,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            })
+            .then((docRef) => {
+                console.log("Data tersimpan dengan ID: ", docRef.id);
+                // Tampilkan pesan sukses
+                document.getElementById('successMessage').style.display = 'block';
+                // Reset form
+                document.getElementById('registrationForm').reset();
+            })
+            .catch((error) => {
+                console.error("Error menyimpan data: ", error);
+                alert("Terjadi kesalahan. Silakan coba lagi.");
+            });
+        });
+    </script>
+</body>
+</html>

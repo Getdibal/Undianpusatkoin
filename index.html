@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Undian Berhadiah Chip - Pusat Koin</title>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -109,6 +110,13 @@
             box-shadow: 0 5px 15px rgba(37, 117, 252, 0.4);
         }
         
+        button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
         .whatsapp-group {
             text-align: center;
             margin-top: 30px;
@@ -138,8 +146,18 @@
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 20px;
-            display: none;
             text-align: center;
+            display: none;
+        }
+        
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
         }
         
         footer {
@@ -147,6 +165,20 @@
             margin-top: 30px;
             color: white;
             font-size: 14px;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
         
         @media (max-width: 600px) {
@@ -172,6 +204,10 @@
             Terima kasih! Data Anda berhasil disimpan. Selamat berpartisipasi dalam undian!
         </div>
         
+        <div class="error-message" id="errorMessage">
+            Terjadi kesalahan. Silakan coba lagi atau hubungi admin.
+        </div>
+        
         <form id="registrationForm">
             <div class="form-group">
                 <label for="whatsapp">Nomor WhatsApp</label>
@@ -183,7 +219,10 @@
                 <input type="text" id="gameId" name="gameId" placeholder="Masukkan ID akun game HGI Anda" required>
             </div>
             
-            <button type="submit">Daftar Sekarang</button>
+            <button type="submit" id="submitBtn">
+                <span id="btnText">Daftar Sekarang</span>
+                <span id="btnLoading" class="loading" style="display:none;"></span>
+            </button>
         </form>
         
         <div class="whatsapp-group">
@@ -196,49 +235,61 @@
         <p>&copy; 2023 Pusat Koin. Seluruh hak cipta dilindungi.</p>
     </footer>
 
-    <!-- Firebase App (core Firebase SDK) -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <!-- Firebase Firestore -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-
     <script>
-        // Konfigurasi Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyD4oN4BkTuqZPAt7BBgV4mXTM5f1OX2lVI",
-            authDomain: "undian-pusat-koin.firebaseapp.com",
-            projectId: "undian-pusat-koin",
-            storageBucket: "undian-pusat-koin.firebasestorage.app",
-            messagingSenderId: "64691767160",
-            appId: "1:64691767160:web:4397e4310c920cc73d6a8d"
-        };
-
-        // Inisialisasi Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-
-        // Handle form submission
+        // Inisialisasi EmailJS
+        emailjs.init("x0v-r6vY7u6XzbibM"); // Ganti dengan Public Key Anda dari EmailJS
+        
         document.getElementById('registrationForm').addEventListener('submit', function(e) {
             e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            const btnLoading = document.getElementById('btnLoading');
+            const successMessage = document.getElementById('successMessage');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Tampilkan loading, sembunyikan teks
+            btnText.style.display = 'none';
+            btnLoading.style.display = 'inline-block';
+            submitBtn.disabled = true;
+            
+            // Sembunyikan pesan error/success sebelumnya
+            successMessage.style.display = 'none';
+            errorMessage.style.display = 'none';
             
             const whatsapp = document.getElementById('whatsapp').value;
             const gameId = document.getElementById('gameId').value;
             
-            // Simpan data ke Firebase
-            db.collection("participants").add({
+            // Kirim data menggunakan EmailJS
+            emailjs.send("service_j356fdp", "template_gow3iqb", {
                 whatsapp: whatsapp,
-                gameId: gameId,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                game_id: gameId,
+                date: new Date().toLocaleString('id-ID')
             })
-            .then((docRef) => {
-                console.log("Data tersimpan dengan ID: ", docRef.id);
+            .then(function(response) {
+                console.log("SUCCESS!", response.status, response.text);
+                
                 // Tampilkan pesan sukses
-                document.getElementById('successMessage').style.display = 'block';
+                successMessage.style.display = 'block';
+                
                 // Reset form
                 document.getElementById('registrationForm').reset();
+                
+                // Arahkan ke grup WhatsApp setelah 3 detik
+                setTimeout(function() {
+                    window.open('https://chat.whatsapp.com/IhwSUNU1ack2dS6SnywCdo', '_blank');
+                }, 3000);
+            }, function(error) {
+                console.log("FAILED...", error);
+                
+                // Tampilkan pesan error
+                errorMessage.style.display = 'block';
             })
-            .catch((error) => {
-                console.error("Error menyimpan data: ", error);
-                alert("Terjadi kesalahan. Silakan coba lagi.");
+            .finally(function() {
+                // Kembalikan tampilan tombol
+                btnText.style.display = 'inline-block';
+                btnLoading.style.display = 'none';
+                submitBtn.disabled = false;
             });
         });
     </script>
